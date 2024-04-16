@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head xmlns="http://www.w3.org/1999/xhtml">
+    <meta charset="UTF-8">
+    <title>Bike Price Predictor</title>
+    <style>
+        body {
+            background-color: #343a40;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .card-header {
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-size: 18px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #495057;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: #ffffff;
+            color: #495057;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1>Welcome to Bike Price Predictor</h1>
+        </div>
+        <div class="card-body">
+            <div class="col-12 text-center">
+                <h5>This app predicts the price of a bike you want to sell. Try filling the details below:</h5>
+            </div>
+            <form id="bikeForm" method="post" accept-charset="utf-8" name="BikeForm" >
+                <div class="col-md-10 form-group text-center">
+                    <label><b>Select the brand:</b> </label><br>
+                    <select class="selectpicker form-control" name="Brand" required="1">
+                        {% for company in companies %}
+                        <option value="{{ company }}">{{ company }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- Inside your form tag -->
+                <div class="col-md-10 form-group text-center">
+                    <label><b>Select the model:</b> </label><br>
+                    <select class="selectpicker form-control" name="Model" required="1">
+                        {% for model in  bike_models %}
+                        <option value="{{ model }}">{{ model }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="col-md-10 form-group text-center">
+                    <label><b>Select Year of Purchase:</b> </label><br>
+                    <select class="selectpicker form-control" name="Year" required="1">
+                        {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-10 form-group text-center">
+                    <label><b>Select the Seller Type:</b> </label><br>
+                    <select class="selectpicker form-control" name="Seller_Type" required="1">
+                        {% for seller in seller_types %}
+                        <option value="{{ seller }}">{{ seller }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-10 form-group text-center">
+                    <label><b>Enter the Number of Kilometres that the bike has travelled:</b> </label><br>
+                    <input type="text" class="form-control" name="Kilo_Driven" placeholder="Enter the kilometres driven "
+                        required="1">
+                </div>
+                <div class="col-md-10 form-group text-center">
+                    <button class="btn btn-primary" type="submit">Predict Price</button>
+                </div>
+            </form>
+            <br>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h4><span id="prediction"></span></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('bikeForm').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+        
+        var formData = new FormData(this); 
+        
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(prediction => {
+            document.getElementById('prediction').textContent = 'Predicted Price: ' + prediction;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('prediction').textContent = 'Error occurred during prediction.';
+        });
+    });
+});
+
+</script>
+
+</body>
+
+</html>
